@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container" style="min-height: 100vh">
+        {% include 'components/alert.html' %}
+        <div class="row my-4 mx-1">
+            <div class="card shadow-custom p-2">
+                <h5 class="text-center">Subscribed Courses</h5>
+                <hr class="mt-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered border-black table-sm table-striped table-hover table-light border-light"
+                           id="sc">
+                        <thead class="table-dark">
+                        <tr class="">
+                            <th scope="col">#</th>
+                            <th scope="col">Instructor</th>
+                            <th scope="col">Course</th>
+                            <th scope="col">Topics</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="tb">
+                        {% for object in object_list %}
+                            <tr id="row-{{ object.id }}">
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ object.course.instructor.first_name|title }}</td>
+                                <td>{{ object.course.course_name|title }}</td>
+                                <td>{% for foo in object.course.content_set.all %}
+                                    <li><a href="#" id="view-course"
+                                           data-mdb-toggle="modal"
+                                           data-mdb-target="#course-detail-page"
+                                           data-title="{{ object.course.course_name|title }}"
+                                           data-description="{{ foo.topic|title }}"
+                                           data-content="{{ foo.content|capfirst }}">{{ foo.topic }}</a>
+                                    </li>
+                                {% endfor %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" id="unsubscribe"
+                                            data-id="{{ object.id }}">Unsubscribe
+                                    </button>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">No Courses Subscribed</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% include 'student/course-details-page.html' %}
+                </div>
+                {% if object_list %}
+                    <div class='pagination justify-content-center pb-2' id="pg">
+                        {% if page_obj.has_previous %}
+                            <a href='?page={{ page_obj.previous_page_number }}'>Previous </a>
+                        {% endif %}
+                        <span class='mx-2'>
+                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                        {% if page_obj.has_next %}
+                            <a href='?page={{ page_obj.next_page_number }}'>Next</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}
+{% block app-js %}
+    <script>
+        $('[id="view-course"]').on('click', function () {
+            $("#exampleModalLabel").text($(this).data('title'));
+            $("#description").text($(this).data('description'));
+            $("#content").text($(this).data('content'));
+        });
+        $('[id="unsubscribe"]').on('click', function () {
+            const id = $(this).data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{% url 'student:un-subscribe' %}',
+                data: {"idx": id},
+                success: function (data) {
+                    console.log(data)
+                    $("#row-" + data.data).remove();
+                    let trCount = $('#sc tr').length;
+                    if (trCount === 1) {
+                        $('#tb').html("<tr><td colspan='7' class='text-center'>No Courses Subscribed</td></tr>");
+                        $("#pg").hide();
+                    }
+                },
+            });
+        });
+    </script>
+{% endblock %}

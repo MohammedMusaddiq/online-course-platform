@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container" style="min-height: 100vh">
+        {% include 'components/alert.html' %}
+        <div class="row my-4 mx-1">
+            <div class="card shadow-custom">
+                <div class="card-title h2 text-center mt-1">
+                    Add New Course
+                    <hr class="mt-1 mb-0">
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="text" name="course-title" class="form-control mb-2" placeholder="Course Title"
+                               value="{{ course.course_name }}" readonly>
+                        <input type="text" name="topic" class="form-control mb-2"
+                               placeholder="Topic">
+                        <textarea class="form-control mb-2" name="content" placeholder="Write Your Content here"
+                                  rows="8"></textarea>
+                        <input type="submit" class="btn btn-block btn-dark mt-3" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}

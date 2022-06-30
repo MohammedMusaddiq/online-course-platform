@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh">
+        <div class="row my-4 mx-1 ">
+            <div class="card shadow-custom">
+                {% include 'components/alert.html' %}
+                <form class="text-center border border-light px-2 py-4" action="{% url 'user:student-register' %}" method="POST">
+                    {% csrf_token %}
+                    <p class="h4 mb-4">Sign up ~ Student</p>
+                    <div class="form-row mb-4">
+                        <div class="col">
+                            <input type="text" name="first_name" id="id_first_name" class="form-control mb-4"
+                                   placeholder="First name" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" name="last_name" id="id_last_name" class="form-control mb-4"
+                                   placeholder="Last name" required>
+                        </div>
+                    </div>
+
+                    <input type="email" name="email" id="id_email" class="form-control mb-4" placeholder="E-mail" required>
+
+                    <input type="password" name="password" id="id_password" class="form-control mb-4"
+                           placeholder="Password" required>
+
+                    <input type="text" name="phone_number" id="id_phone_number" class="form-control mb-4"
+                           placeholder="Phone number">
+
+                    <button class="btn btn-info my-4 btn-block" type="submit">Sign up</button>
+                    <p class="mb-1">By clicking
+                        <em>Sign up</em> you agree to our
+                        <a href="#">terms of service</a>
+                    </p>
+                    <hr class="my-1">
+                    <p class="">Already have an Account
+                        <a href="{% url 'user:student-login' %}"><em>Sign in</em></a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}

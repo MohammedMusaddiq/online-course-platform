@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh">
+        <div class="row">
+            <div class="shadow-custom p-5">
+                <h2 class="px-2 pt-2 text-center"><em>Welcome to -</em> <i class="fa fa-asterisk"></i></h2>
+                <p class="text-center">An online learning platform</p>
+                <h6 class="text-center text-muted">Select your prefer role to continue</h6>
+                <div class="text-center p-2">
+                    <a href="{% url 'user:student-login' %}" class="btn btn-sm btn-dark">Student</a>
+                    <a href="{% url 'user:teacher-login' %}" class="btn btn-sm btn-dark">Instructor</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}

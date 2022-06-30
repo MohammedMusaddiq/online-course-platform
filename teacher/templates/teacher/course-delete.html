@@ -1,0 +1,16 @@
+<div class="modal top fade" id="course-delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+     data-mdb-backdrop="static" data-mdb-keyboard="true">
+    <div class="modal-dialog modal-sm  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                Do you want to delete selected course
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-mdb-dismiss="modal">
+                    Close
+                </button>
+                <a href="{% url 'teacher:delete-course' t.id %}" class="btn btn-sm btn-danger">delete</a>
+            </div>
+        </div>
+    </div>
+</div>

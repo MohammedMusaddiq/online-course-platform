@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container" style="min-height: 100vh">
+        {% include 'components/alert.html' %}
+        <div class="row d-flex justify-content-center align-items-center mt-4 mx-1" style="min-height: 60vh">
+            <div class="card shadow-custom">
+                <h4 class="text-center p-2">Welcome To Digi Academy
+                </h4>
+                <hr>
+                <div class="row text-center mt-4 mb-4">
+                    <div class="col-lg-3">
+                        <a href="{% url 'teacher:teachers-dashboard' %}" class="btn btn-sm btn-success mb-2 w-100">Dashboard</a>
+                    </div>
+                    <div class="col-lg-3">
+                        <a href="{% url 'teacher:teachers-courses' %}"
+                           class="btn btn-sm btn-success mb-2 w-100">Courses</a>
+                    </div>
+                    <div class="col-lg-3">
+                        <a href="{% url 'teacher:student-list' %}"
+                           class="btn btn-sm btn-success mb-2 w-100">Students</a>
+                    </div>
+                    <div class="col-lg-3">
+                        <a href="{% url 'user:logout' %}" class="btn btn-sm btn-danger mb-2 w-100">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh">
+        <div class="row my-4 mx-1 ">
+            <div class="card shadow-custom">
+                {% include 'components/alert.html' %}
+                <form class="text-center border border-light px-5 pt-2 pb-2" action="{% url 'user:teacher-login' %}"
+                      method="POST">
+                    {% csrf_token %}
+                    <p class="h4 mb-4 mt-0">Sign in ~ Instructor</p>
+                    <input type="email" name="email" id="id_email" class="form-control mb-4" placeholder="E-mail">
+                    <input type="password" name="password" id="id_password" class="form-control mb-4"
+                           placeholder="Password">
+                    <div class="d-flex justify-content-around">
+                        <div>
+                            <a href="">Forgot password?</a>
+                        </div>
+                    </div>
+                    <button class="btn btn-info btn-block my-4" type="submit">Sign in</button>
+                    <p>Not a member?
+                        <a href="{% url 'user:teacher-register' %}">Register</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}

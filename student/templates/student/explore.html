@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+<div class="container" style="min-height: 100vh">
+    {% include 'components/alert.html' %}
+    <div class="alert py-1 mt-2 text-center" id="notify" role="alert" style="display: none">
+
+    </div>
+    <form action="{% url 'student:search' %}" class="mb-2 mt-4">
+        <input id="query" name="query" type="text" class="form-control" placeholder="Search Courses">
+    </form>
+    <div class="row mt-3 mb-4 mx-1">
+        <div class="card shadow-custom">
+            <h5 class="text-muted text-center pb-2 pt-2 border-2 border-bottom">Explore Latest Courses</h5>
+            <div class="card" id="courses">
+                {% for course in course_list %}
+                    <div class="card-body" id="card-body">
+                        <h5 class="card-title mb-0" id="title">{{ course.course_name|title }}</h5>
+                        <hr class="my-1">
+                        <small>{% for content in course.content_set.all %}
+                            <li>{{ content.topic }}</li>
+                        {% endfor %}
+                        </small>
+                        <p class="card-text mt-2">
+                            {{ course.content_set.content|truncatewords:20 }}
+                        </p>
+                        <a href="#" data-course_id="{{ course.id }}"
+                           id="subscribe"
+                           class="btn btn-sm btn-success">Subscribe</a>
+                    </div>
+                    <hr>
+                {% empty %}
+                    <div class="card-body">
+                        <h5 class="card-title mb-0">No Courses Found</h5>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if course_list %}
+                <div class='pagination justify-content-center pb-2' id="pg">
+                    {% if page_obj.has_previous %}
+                        <a href='?page={{ page_obj.previous_page_number }}'>Previous </a>
+                    {% endif %}
+                    <span class='mx-2'>
+                          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    {% if page_obj.has_next %}
+                        <a href='?page={{ page_obj.next_page_number }}'>Next</a>
+                    {% endif %}
+                </div>
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}
+
+{% block app-js %}
+    <script>
+        $('[id="subscribe"]').on('click', function () {
+            const idx = $(this).data('course_id')
+            $.ajax({
+                type: 'GET',
+                url: '{% url 'student:subscribe' %}',
+                data: {"id": idx},
+                success: function (response) {
+                    console.log(response)
+                    $("#notify").addClass(`${response.color}`)
+                    $("#notify").show()
+                    $("#notify").text(`${response.message}`)
+                    $("#notify").fadeOut(3500)
+                }
+            })
+        });
+    </script>
+{% endblock %}

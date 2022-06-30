@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container" style="min-height: 100vh">
+        {% include 'components/alert.html' %}
+        <div class="row my-4 mx-1">
+            <a href="{% url 'teacher:create-courses' %}" class="btn btn-outline-success">Add New Course</a>
+        </div>
+        <div class="row my-4 mx-1">
+            <div class="card shadow-custom">
+                <div class="card-title text-center mt-2 h2">
+                    Your Courses
+                    <hr class="mt-1 mb-0">
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover table-sm table-light ">
+                            <thead class="table-dark">
+                            <tr class="text-center">
+                                <th scope="col">#</th>
+                                <th scope="col">Course</th>
+                                <th scope="col">Topic</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for course in course_list %}
+                                <tr>
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ course.course_name }}<br><a
+                                            href="{% url 'teacher:add_topic' course.id %}">Add Topics</a><br>
+                                        <a href="{% url 'teacher:delete-course' course.id %}" class="text-danger">Delete
+                                            Course</a>
+                                    </td>
+                                    <td>
+                                        {% for topic in course.content_set.all %}
+                                            {{ forloop.counter }}.
+                                            <a href="#" class="text-success me-5" id="detail"
+                                               data-mdb-toggle="modal"
+                                               data-mdb-target="#course-detail"
+                                               data-title="{{ topic.topic }}"
+                                               data-content="{{ topic.content }}">{{ topic.topic }}</a>
+                                            <br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'teacher:edit-content' topic.id %}"
+                                                                       class="text-danger">edit&nbsp;&nbsp;|&nbsp;&nbsp;</a>
+                                            <a href="{% url 'teacher:delete-content' topic.id %}" class="text-danger">delete</a>
+                                            <hr class="my-1">
+                                        {% empty %}
+                                            <p class="text-danger my-0">No topics yet</p>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No Courses Found</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% include 'teacher/course-detail.html' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}
+{% block app-js %}
+    <script>
+        $('[id="detail"]').on('click', function () {
+            $('#topic-name').text($(this).data('title'));
+            $('#content').text($(this).data('content'));
+        });
+    </script>
+{% endblock %}

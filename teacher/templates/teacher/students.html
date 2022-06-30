@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block app-css %}
+    <style>
+        .shadow-custom {
+            box-shadow: 0 2px 20px 0 rgba(0, 0, 0, .25), 0 3px 10px 5px rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+    {% include 'components/navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container" style="min-height: 100vh">
+        {% include 'components/alert.html' %}
+        <div class="row my-4 mx-1">
+            <div class="card shadow-custom p-2">
+                <h5 class="text-center">Student List</h5>
+                <hr class="mt-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped table-hover table-light border-light">
+                        <thead class="table-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Student</th>
+                            <th scope="col">Course</th>
+                            <th scope="col">Subscribed-On</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for object in object_list %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ object.student.first_name }}</td>
+                                <td>{{ object.course.course_name}}</td>
+                                <td>{{ object.registration_date }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No Data Found</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if object_list %}
+                    <div class='pagination justify-content-center pb-2' id="pg">
+                        {% if page_obj.has_previous %}
+                            <a href='?page={{ page_obj.previous_page_number }}'>Previous </a>
+                        {% endif %}
+                        <span class='mx-2'>
+                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                        {% if page_obj.has_next %}
+                            <a href='?page={{ page_obj.next_page_number }}'>Next</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footbar %}
+    {% include 'components/footer.html' %}
+{% endblock %}
