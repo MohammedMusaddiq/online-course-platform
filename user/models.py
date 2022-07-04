@@ -39,6 +39,8 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=150)
     email = models.EmailField('email address', unique=True)
+    otp = models.IntegerField(default=0)
+    is_verified = models.BooleanField(default=False)
     is_student = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
 

@@ -1,29 +1,18 @@
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model, logout
-from .models import Visitors
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
+from .email import send_otp_via_mail
 from django.views.generic.base import TemplateView
 
 User = get_user_model()
-
-
-def visitor_ip_address(request):
-    return x_forwarded_for.split(',')[0] if (
-        x_forwarded_for := request.META.get('HTTP_X_FORWARDED_FOR')) else request.META.get('REMOTE_ADDR')
 
 
 def welcome_page(request):
     context = {
         'title': 'DA | Welcome'
     }
-    ip = visitor_ip_address(request)
-
-    result = Visitors.objects.filter(ip_address__contains=ip)
-    if len(result) == 0:
-        u_c = Visitors.objects.create(ip_address=ip)
-        u_c.save()
     if request.user.is_authenticated:
         u = User.objects.get(id=request.user.id)
         if u.is_student:
@@ -51,12 +40,12 @@ class StudentLoginView(View):
         if user_obj is None:
             messages.error(self.request, "Wrong Credentials. Please Try Again")
             return render(self.request, 'user/student-login.html', {'title': 'DA-Student | Login'})
-        elif user_obj.is_student:
+        elif user_obj.is_student and user_obj.is_verified:
             login(self.request, user_obj)
             messages.success(self.request, f"Logged in Successfully as {self.request.user.first_name}")
             return redirect('student:student-dashboard')
-        messages.error(self.request, "Permission Error. Not a Student Account")
-        return redirect('user:student-login')
+        messages.error(self.request, "Account Not Verified | please verify your account first")
+        return redirect('user:verify-otp', email)
 
 
 class StudentRegisterView(View):
@@ -68,12 +57,10 @@ class StudentRegisterView(View):
         return render(self.request, 'user/student-register.html', {'title': 'DA-Student | Register'})
 
     def post(self, *args, **kwargs):
-        print('post')
         email = self.request.POST.get('email')
         password = self.request.POST.get('password')
         first_name = self.request.POST.get('first_name')
         last_name = self.request.POST.get('last_name')
-        phone_number = self.request.POST.get('phone_number')
         if User.objects.filter(email=email).exists():
             messages.error(self.request, "Email Already Exists. Please Try Again")
             return redirect('user:student-register')
@@ -87,8 +74,9 @@ class StudentRegisterView(View):
                 user_obj.last_name = last_name
                 user_obj.is_student = True
                 user_obj.save()
-                messages.success(self.request, "Account created Successfully. Please Login")
-                return redirect('user:student-login')
+                send_otp_via_mail(email)
+                messages.success(self.request, "Verify with otp sent to your email to complete signup")
+                return redirect('user:verify-otp', email=email)
             except Exception as e:
                 print(e)
                 messages.error(self.request, "Unknown Error..Please Try Again")
@@ -110,12 +98,12 @@ class TeacherLoginView(View):
         if user_obj is None:
             messages.error(self.request, "Wrong Credentials. Please Try Again")
             return redirect('user:teacher-login')
-        elif user_obj.is_teacher:
+        elif user_obj.is_teacher and user_obj.is_verified:
             login(self.request, user_obj)
             messages.success(self.request, f"Logged in successfully as {self.request.user.first_name}")
             return redirect('teacher:teachers-dashboard')
         messages.error(self.request, "Permission Error. Not a Teacher Account")
-        return redirect('user:teacher-login')
+        return redirect('user:verify-otp', email)
 
 
 class TeacherRegisterView(View):
@@ -132,7 +120,6 @@ class TeacherRegisterView(View):
         password = self.request.POST.get('password')
         first_name = self.request.POST.get('first_name')
         last_name = self.request.POST.get('last_name')
-        phone_number = self.request.POST.get('phone_number')
         if User.objects.filter(email=email).exists():
             messages.error(self.request, "Email Already Exists. Please Try Again")
             return redirect('user:teacher-register')
@@ -146,15 +133,37 @@ class TeacherRegisterView(View):
                 user_obj.last_name = last_name
                 user_obj.is_teacher = True
                 user_obj.save()
-                messages.success(self.request, "Registered Successfully. Please Login to Continue")
-                return redirect('user:teacher-login')
+                send_otp_via_mail(email)
+                messages.success(self.request, "Verify with otp sent to your email to complete signup")
+                return redirect('user:verify-otp', email)
             except Exception as e:
                 print(e)
                 messages.error(self.request, "Unknown Error..Please Try Again")
-                return redirect('user:teacher-register')
+                return redirect('user:teacher-register', )
 
 
 class LogoutView(View):
     def get(self, request):
         logout(self.request)
         return HttpResponseRedirect('/')
+
+
+class VerifyOtp(View):
+    @staticmethod
+    def get(request, *args, **kwargs):
+        email = kwargs.get('email')
+        return render(request, 'user/verify_otp.html', {'title': 'DA-Teacher | Verify OTP', 'email': email})
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        email = kwargs.get('email')
+        otp = request.POST.get('otp')
+        user_obj = User.objects.get(email=email)
+        if int(user_obj.otp) == int(otp):
+            user_obj.is_verified = True
+            user_obj.save()
+            messages.success(request, "Verified Successfully. Please Login to Continue")
+            return redirect('user:student-login')
+        else:
+            messages.error(request, "Wrong OTP. Please Try Again")
+            return redirect('user:verify-otp', email=email)

@@ -22,13 +22,15 @@ class UserAdmin(auth_admin.UserAdmin):
     list_display = ('email', 'is_student', 'is_teacher', 'is_active',)
     list_filter = ('email', 'is_student', 'is_teacher', 'is_active',)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_student', 'is_teacher')}),
+        (None, {'fields': ('email', 'password', 'first_name', 'last_name', 'otp')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_student', 'is_teacher', 'is_verified')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active', 'is_student', 'is_teacher')}
+            'fields': (
+                'email', 'password1', 'password2', 'otp', 'is_staff', 'is_active', 'is_student', 'is_teacher',
+                'is_verified')}
          ),
     )
     search_fields = ('email',)
