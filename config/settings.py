@@ -133,6 +133,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_PASSWORD = "qgqyqsjvxxkikovg"
 
-PAYPAL_RECEIVER_EMAIL = 'sb-gqmlr18055333@business.example.com'
+PAYPAL_RECEIVER_EMAIL = 'sb-9wzby18056718@business.example.com'
 
 PAYPAL_TEST = True
