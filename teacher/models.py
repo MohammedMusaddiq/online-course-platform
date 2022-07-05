@@ -7,6 +7,7 @@ User = settings.AUTH_USER_MODEL
 class Course(models.Model):
     instructor = models.ForeignKey(User, on_delete=models.CASCADE)
     course_name = models.CharField(max_length=100, null=True, blank=True)
+    price = models.IntegerField(null=True, blank=True)
     published_date = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
 
@@ -22,3 +23,4 @@ class Content(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     topic = models.CharField(max_length=100, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
+

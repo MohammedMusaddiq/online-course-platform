@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'student.apps.StudentConfig',
     'teacher.apps.TeacherConfig',
     'fontawesomefree',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -118,7 +119,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.CustomUser'
 
-CSRF_TRUSTED_ORIGINS = ['https://8e9d-150-129-61-231.in.ngrok.io', ]
+CSRF_TRUSTED_ORIGINS = ['https://46fc-150-129-61-231.in.ngrok.io', ]
 
 MESSAGE_TAGS = {
     messages.SUCCESS: 'primary',
@@ -131,3 +132,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_PASSWORD = "qgqyqsjvxxkikovg"
+
+PAYPAL_RECEIVER_EMAIL = 'sb-gqmlr18055333@business.example.com'
+
+PAYPAL_TEST = True

@@ -16,18 +16,16 @@
 {% block content %}
     <div class="container" style="min-height: 100vh">
         {% include 'components/alert.html' %}
-        <div class="row my-4 mx-1">
+        <div class="row d-flex justify-content-center align-items-center mt-4 mx-1" style="min-height: 60vh">
             <div class="card shadow-custom">
-                <div class="card-title h2 text-center mt-1">
-                    Add New Course
-                    <hr class="mt-1 mb-0">
-                </div>
-                <div class="card-body">
-                    <form action="{% url 'teacher:create-courses' %}" method="POST">
+                <h4 class="text-center pt-2">Confirm Your Order</h4>
+                <hr class="mt-1">
+                <div class="p-5">
+                    <h3>{{ course.course_name }}</h3>
+                    <h3>₹ {{ course.price }}</h3>
+                    <form action="#" method="post">
                         {% csrf_token %}
-                        <input type="text" name="course-title" class="form-control mb-2" placeholder="Course Title">
-                        <input type="text" name="price" class="form-control mb-2" placeholder="Price">
-                        <button type="submit" class="btn btn-block btn-dark mt-3">Submit</button>
+                        <input type="submit" class="btn btn-sm btn-dark" value="proceed">
                     </form>
                 </div>
             </div>

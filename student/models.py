@@ -10,6 +10,8 @@ class CourseRegistration(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
     registration_date = models.DateField(auto_now_add=True)
     subscribed = models.BooleanField(default=False)
+    paid = models.BooleanField(default=False)
+    transaction_id = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Course Registrations'

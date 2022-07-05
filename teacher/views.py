@@ -1,11 +1,16 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView
 
 from .models import Course, Content
 from student.models import CourseRegistration
+from paypal.standard.forms import PayPalPaymentsForm
+import random
 
 User = get_user_model()
 
@@ -41,10 +46,12 @@ class CourseCreate(View):
 
     def post(self, request, *args, **kwargs):
         course_title = request.POST.get('course-title')
+        price = request.POST.get('price')
         try:
             c = Course.objects.create(
                 instructor=request.user,
                 course_name=course_title,
+                price=price,
             ).save()
             messages.success(request, "Course created successfully")
             return redirect('teacher:teachers-courses')
@@ -126,3 +133,51 @@ def delete_course(request, pk):
     obj = Course.objects.get(id=pk)
     obj.delete()
     return redirect('teacher:teachers-courses')
+
+
+def confirm_order(request, pk):
+    course = Course.objects.get(id=pk)
+    if request.method == 'POST':
+        cr = CourseRegistration.objects.create(
+            course=course,
+            student=request.user,
+        )
+        request.session['registration'] = cr.id
+        return redirect('teacher:process_payment')
+    context = {
+        'title': f'DA | {request.user}',
+        'navbar': 'teacher-courses',
+        'course': course,
+    }
+    return render(request, 'student/order-confirm.html', context)
+
+
+def process_payment(request):
+    cr_id = request.session.get('registration')
+    cr = CourseRegistration.objects.get(id=cr_id)
+    paypal_dict = {'business': settings.PAYPAL_RECEIVER_EMAIL,
+                   'amount': str(cr.course.price),
+                   'item_name': str(f'Order- {cr.course.course_name}'),
+                   'invoice': str(cr.id),
+                   'currency_code': 'USD',
+                   'notify_url': f"http://{request.get_host()}{reverse('paypal-ipn')}",
+                   'return_url': f"http://{request.get_host()}{reverse('teacher:payment_done')}",
+                   'cancel_return': f"http://{request.get_host()}{reverse('teacher:payment_cancelled')}"}
+
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    context = {
+        'title': f'DA | {request.user}',
+        'navbar': 'teacher-courses',
+        'form': form,
+    }
+    return render(request, 'student/pay.html', context)
+
+
+@csrf_exempt
+def payment_done(request):
+    return render(request, 'student/payment-success.html')
+
+
+@csrf_exempt
+def payment_canceled(request):
+    return render(request, 'student/payment-failed.html')

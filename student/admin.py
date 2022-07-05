@@ -4,4 +4,4 @@ from .models import CourseRegistration
 
 @admin.register(CourseRegistration)
 class CourseRegistrationAdmin(admin.ModelAdmin):
-    list_display = ['course', 'student']
+    list_display = ['course', 'student', 'subscribed', 'paid']

@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from .models import Visitors
 
 from user.forms import (
     UserChangeForm,
@@ -37,8 +36,3 @@ class UserAdmin(auth_admin.UserAdmin):
     ordering = ('email',)
 
 
-class VisitorsAdmin(admin.ModelAdmin):
-    list_display = ['ip_address', 'date', 'time']
-
-
-admin.site.register(Visitors, VisitorsAdmin)

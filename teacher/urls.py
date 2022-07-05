@@ -13,4 +13,8 @@ urlpatterns = [
     path('<int:pk>/edit/', views.edit_content, name='edit-content'),
     path('<int:pk>/add-topic/', views.add_topic, name='add_topic'),
     path('student-list/', views.StudentList.as_view(), name='student-list'),
+    path('confirm-order/<int:pk>/', views.confirm_order, name='confirm-order'),
+    path('process-payment/', views.process_payment, name='process_payment'),
+    path('payment-done/', views.payment_done, name='payment_done'),
+    path('payment-cancelled/', views.payment_canceled, name='payment_cancelled'),
 ]

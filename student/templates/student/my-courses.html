@@ -29,7 +29,6 @@
                             <th scope="col">Instructor</th>
                             <th scope="col">Course</th>
                             <th scope="col">Topics</th>
-                            <th scope="col"></th>
                         </tr>
                         </thead>
                         <tbody id="tb">
@@ -48,13 +47,8 @@
                                     </li>
                                 {% endfor %}
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger" id="unsubscribe"
-                                            data-id="{{ object.id }}">Unsubscribe
-                                    </button>
-                                </td>
                             </tr>
-                        {% empty %}
+                            {% empty %}
                             <tr>
                                 <td colspan="7" class="text-center">No Courses Subscribed</td>
                             </tr>
@@ -89,23 +83,6 @@
             $("#exampleModalLabel").text($(this).data('title'));
             $("#description").text($(this).data('description'));
             $("#content").text($(this).data('content'));
-        });
-        $('[id="unsubscribe"]').on('click', function () {
-            const id = $(this).data('id');
-            $.ajax({
-                type: 'GET',
-                url: '{% url 'student:un-subscribe' %}',
-                data: {"idx": id},
-                success: function (data) {
-                    console.log(data)
-                    $("#row-" + data.data).remove();
-                    let trCount = $('#sc tr').length;
-                    if (trCount === 1) {
-                        $('#tb').html("<tr><td colspan='7' class='text-center'>No Courses Subscribed</td></tr>");
-                        $("#pg").hide();
-                    }
-                },
-            });
         });
     </script>
 {% endblock %}
